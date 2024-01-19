@@ -3,13 +3,12 @@ import prisma from '../../../prisma/prisma-client'
 import GameBoard from '@/components/game/play'
 import GameView from '@/components/game/view'
 import { useState } from 'react'
-import { GamePlay, Pair } from '@prisma/client'
+import { Game, GamePlay, Pair } from '@prisma/client'
 
 export default function Game(props: any) {
   const [activeGame, setActiveGame] = useState<boolean>()
 
-  const addPairsToGame = async ({ data }) => {
-    console.log('data from fn: ', data)
+  const addPairsToGame = async ({ data }: { data: Pair[] }) => {
     const response = await fetch('/api/create-pairs', {
       method: 'POST',
       body: JSON.stringify(

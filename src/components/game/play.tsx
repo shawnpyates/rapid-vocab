@@ -3,7 +3,8 @@ import { nanoid } from 'nanoid'
 import { useEffect, useMemo, useState } from 'react'
 import Modal from 'react-modal'
 
-import type { Game, GamePlay, Pair } from '@prisma/client'
+import type { GamePlay, Pair } from '@prisma/client'
+import type { Game } from '@/types'
 
 const MAX_POINTS_PER_PAIR = 100
 const MAX_TIME_PER_PAIR = 5
@@ -73,6 +74,7 @@ const GameBoard = ({
   game: Game
   pairs: Pair[]
   setActiveGame: (active: boolean) => void
+  createGamePlay: (gamePlay: Partial<GamePlay>) => void
 }) => {
   const [elapsedTime, setElapsedTime] = useState(0)
   const [currentPairSet, setCurrentPairSet] = useState<{
@@ -101,7 +103,7 @@ const GameBoard = ({
     ]
     newList.sort((a, b) => b.score - a.score)
     newList.pop() // remove score that got bumped off list by new high score
-    setNewHighScoreList(newList)
+    setNewHighScoreList(newList as GamePlay[])
   }
 
   const submitHighScore = async () => {

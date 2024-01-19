@@ -1,8 +1,15 @@
 import { parse } from 'papaparse'
-import type { Game, Pair } from '@prisma/client'
+import type { Pair } from '@prisma/client'
 import { useState } from 'react'
+import type { Game } from '@/types'
 
-const GameView = ({ game, addPairsToGame, setActiveGame }: { game: Game }) => {
+type GameViewProps = {
+  game: Game
+  addPairsToGame: ({ data }: { data: Pair[] }) => void
+  setActiveGame: (isActive: boolean) => void
+}
+
+const GameView = ({ game, addPairsToGame, setActiveGame }: GameViewProps) => {
   const [stagedFile, setStagedFile] = useState<File>()
 
   const importCsv = () => {
