@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "bun prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:migrate:dev": "npx dotenv -e .env.local -- prisma migrate dev"
   },
   "dependencies": {
     "@prisma/client": "^5.6.0",
@@ -24,6 +25,7 @@
     "@types/react-dom": "^18",
     "@types/react-modal": "^3.16.3",
     "autoprefixer": "^10.0.1",
+    "dotenv": "^16.4.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.3",
     "postcss": "^8",
