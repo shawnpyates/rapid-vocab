@@ -5,38 +5,32 @@ import GameView from '@/components/game/view'
 import { useState } from 'react'
 import { Game, GamePlay, Pair } from '@prisma/client'
 
+import useUpdate from '../../hooks/use-update'
+
 export default function Game(props: any) {
   const [activeGame, setActiveGame] = useState<boolean>()
 
-  const addPairsToGame = async ({ data }: { data: Pair[] }) => {
-    const response = await fetch('/api/create-pairs', {
-      method: 'POST',
-      body: JSON.stringify(
-        data.map(({ englishTerm, l2Term }: Partial<Pair>) => ({
-          englishTerm,
-          l2Term,
-          gameId: props.game.id
-        }))
-      )
+  const { isLoading: isCreatingPairs, update: createPairs } = useUpdate({
+    route: '/api/create-pairs'
+  })
+
+  const { isLoading: isCreatingGamePlay, update: createNewGamePlay } =
+    useUpdate({
+      route: '/api/create-game-play'
     })
-    if (response.ok) {
-      console.log('CSV import successful')
-    } else {
-      console.error('CSV import failed:', response.statusText)
-    }
+
+  const addPairsToGame = async ({ data }: { data: Pair[] }) => {
+    await createPairs(
+      data.map(({ englishTerm, l2Term }: Partial<Pair>) => ({
+        englishTerm,
+        l2Term,
+        gameId: props.game.id
+      }))
+    )
   }
-  console.log('PROPS: ', props.game.gamePlays)
 
   const createGamePlay = async ({ name, score }: Partial<GamePlay>) => {
-    const response = await fetch('/api/create-game-play', {
-      method: 'POST',
-      body: JSON.stringify({ name, score, gameId: props.game.id })
-    })
-    if (response.ok) {
-      console.log('CSV import successful')
-    } else {
-      console.error('CSV import failed:', response.statusText)
-    }
+    await createNewGamePlay({ name, score, gameId: props.game.id })
   }
 
   return (
@@ -47,12 +41,14 @@ export default function Game(props: any) {
           pairs={props.game.pairs}
           setActiveGame={setActiveGame}
           createGamePlay={createGamePlay}
+          isLoading={isCreatingGamePlay}
         />
       ) : (
         <GameView
           game={props.game}
           addPairsToGame={addPairsToGame}
           setActiveGame={setActiveGame}
+          isLoading={isCreatingPairs}
         />
       )}
     </div>

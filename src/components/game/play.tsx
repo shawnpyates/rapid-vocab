@@ -69,12 +69,14 @@ const GameBoard = ({
   game,
   pairs,
   setActiveGame,
-  createGamePlay
+  createGamePlay,
+  isLoading
 }: {
   game: Game
   pairs: Pair[]
   setActiveGame: (active: boolean) => void
   createGamePlay: (gamePlay: Partial<GamePlay>) => void
+  isLoading?: boolean
 }) => {
   const [elapsedTime, setElapsedTime] = useState(0)
   const [currentPairSet, setCurrentPairSet] = useState<{
@@ -201,16 +203,15 @@ const GameBoard = ({
               </h6>
               <h6 className="text-md">Please write your name for the board.</h6>
               <input
+                className="border mr-3 p-2"
                 onChange={e => {
                   setPlayerName(e.target.value)
                 }}
               />
               <button
                 className="bg-blue-700 text-white rounded-sm py-1 px-3 mt-2"
-                disabled={!playerName}
-                onClick={() => {
-                  submitHighScore()
-                }}
+                disabled={!playerName || isLoading}
+                onClick={submitHighScore}
               >
                 Submit
               </button>

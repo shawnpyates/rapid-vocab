@@ -1,11 +1,6 @@
-import prisma from "../../prisma/prisma-client";
-import './globals.css'
-
-import List from '../pages/languages'
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-  return (
-    <div>hi</div>
-  )
+  redirect('/languages')
+  return null
 }
-

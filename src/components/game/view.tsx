@@ -3,13 +3,53 @@ import type { Pair } from '@prisma/client'
 import { useState } from 'react'
 import type { Game } from '@/types'
 
+const Pair = ({
+  initialEnglishTerm,
+  initialL2Term
+}: {
+  initialEnglishTerm: string
+  initialL2Term: string
+}) => {
+  const [englishTerm, setEnglishTerm] = useState(initialEnglishTerm)
+  const [l2Term, setL2Term] = useState(initialL2Term)
+
+  return (
+    <div className="flex flex-row w-full justify-between">
+      <div>
+        <input
+          className="w-32 p-1"
+          value={englishTerm}
+          onChange={e => {
+            setEnglishTerm(e.target.value)
+          }}
+        />
+      </div>
+      <div>
+        <input
+          className="w-32 p-1"
+          value={l2Term}
+          onChange={e => {
+            setL2Term(e.target.value)
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
 type GameViewProps = {
   game: Game
   addPairsToGame: ({ data }: { data: Pair[] }) => void
   setActiveGame: (isActive: boolean) => void
+  isLoading?: boolean
 }
 
-const GameView = ({ game, addPairsToGame, setActiveGame }: GameViewProps) => {
+const GameView = ({
+  game,
+  addPairsToGame,
+  setActiveGame,
+  isLoading
+}: GameViewProps) => {
   const [stagedFile, setStagedFile] = useState<File>()
 
   const importCsv = () => {
@@ -41,7 +81,7 @@ const GameView = ({ game, addPairsToGame, setActiveGame }: GameViewProps) => {
           {stagedFile && (
             <button
               onClick={importCsv}
-              disabled={!stagedFile}
+              disabled={!stagedFile || isLoading}
               className="bg-blue-700 text-white rounded-sm py-1 px-3 mt-2 w-32"
             >
               Start Upload
@@ -54,6 +94,7 @@ const GameView = ({ game, addPairsToGame, setActiveGame }: GameViewProps) => {
               setActiveGame(true)
             }}
             className="bg-blue-700 text-white rounded-sm py-1 px-3 mt-2"
+            disabled={!game.pairs.length}
           >
             Start Game
           </button>
@@ -63,12 +104,17 @@ const GameView = ({ game, addPairsToGame, setActiveGame }: GameViewProps) => {
         <div className="flex justify-center text-xl">
           <h4>Pairs</h4>
         </div>
-        {game.pairs.map((pair: Pair) => (
-          <div key={pair.id} className="flex flex-row w-full justify-between">
-            <div>{pair.englishTerm}</div>
-            <div>{pair.l2Term}</div>
-          </div>
-        ))}
+        {game.pairs.length ? (
+          game.pairs.map((pair: Pair) => (
+            <Pair
+              key={pair.id}
+              initialEnglishTerm={pair.englishTerm}
+              initialL2Term={pair.l2Term}
+            />
+          ))
+        ) : (
+          <div>No pairs created yet</div>
+        )}
       </div>
     </div>
   )

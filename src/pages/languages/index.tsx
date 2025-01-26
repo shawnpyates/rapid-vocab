@@ -3,22 +3,25 @@ import prisma from '../../../prisma/prisma-client'
 
 import type { Language } from '@/types'
 
+import LanguageCard from '@/components/language-card'
+
 export default function List(props: { languages: Language[] }) {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="flex-col z-10 max-w-5xl items-center justify-between text-lg">
+    <div className="p-8">
+      <h1 className="text-4xl font-bold text-gray-900 mb-8">
+        Choose a Language
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {props.languages.map(language => (
-          <div key={language.id}>
-            <Link href={`/languages/${language.id}`}>{language.name}</Link>
-          </div>
+          <LanguageCard key={language.id} language={language} />
         ))}
       </div>
-    </main>
+    </div>
   )
 }
 
 export async function getServerSideProps() {
-  const languages = await prisma.language.findMany()
+  const languages = await prisma.language.findMany({ orderBy: { name: 'asc' } })
   return {
     props: { languages: languages.map(({ name, id }) => ({ name, id })) }
   }
